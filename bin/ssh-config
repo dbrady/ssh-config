@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'ftools'
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'ssh-config'))
 
 # ssh-config - Manipulate config values in the .ssh/config file.
 # 
@@ -13,166 +14,12 @@ require 'ftools'
 # ssh-config rm <host-nickname> # delete config settings for that host
 # ssh-config copy <host-nickname> <new-host-nickname> # copy settings from one to the other. 
 
-# TODO:
-# 
-# x Capture per-line data, so things like whitespace and comments are
-#   preserved; this makes the tool friendly to editing the file
-#   directly.
-# 
-# - copy should copy, then do a replace based on host-nickname. e.g. If
-#   I have
-#   
-#   Host rails01
-#       Hostname rails01.example.com
-# 
-#   then "copy rails01 rails02" should copy it and change the Hostname
-#   to "rails02.example.com".
-# 
-# - search mode should highlight search results by wrapping them in
-#   \033[43m and \033[0m
-# 
-# - sort mode? Sorts Host names and settings. Erk: Where do comments go?
-# 
-# - cleanup mode? Standardize indentation of subsections.
-# 
-# x backup config file before writing
-# 
-# - Logging mechanism / -q option to shut it up?
-# 
-# - gemmify
+config = ConfigFile.new
+argv = ARGV
+command = argv.shift
 
-class ConfigSection
-  attr_accessor :name, :lines, :settings
-  def initialize(name)
-    @name = name
-    @settings = {}
-    @lines = []
-  end
-  
-  def [](setting)
-    unless @settings.key? setting
-      if line = lines[setting_index(setting)]
-        key,val = line.split(nil, 2)
-        @settings[key] = val
-      end
-    end
-    @settings[setting]
-  end
-  
-  def to_s
-    ["Host #{name}", *lines] * "\n"
-  end
-  
-  def []=(setting, value)
-    if value != '-'
-      line_num = setting_index(setting) || lines.length
-      lines[line_num] = format_line(setting, value)
-    else
-      @settings.delete(setting)
-      @lines.delete_at(setting_index(setting))
-    end
-  end
-  
-  def matches?(text)
-    r = Regexp.new text
-    name =~ r || lines.any? {|line| line =~ r}
-  end
-  
-  protected
-  
-  def format_line(setting, value)
-    "    #{setting} #{value}"
-  end
-  
-  def setting_index(setting)
-    r = Regexp.new(setting)
-    lines.index {|line| line =~ r}
-  end
-end
-
-class SshConfigFile
-  def initialize
-    @header_lines = []
-    @sections = []
-    @sections_by_name = {}
-    read_config
-  end
-  
-  def add_section(name)
-    section = ConfigSection.new(name)
-    @sections << section
-    @sections_by_name[name] = section
-    section
-  end
-  
-  def read_config
-    current_section = nil
-    IO.readlines(File.expand_path("~/.ssh/config")).each_with_index do |line, i|
-      line.rstrip!
-      if line =~ /\bHost\s+(.+)/
-        current_section = add_section($1)
-      else
-        if current_section
-          current_section.lines << line
-        else
-          @header_lines << line
-        end        
-      end
-    end
-  end
-  
-  def show(host_nick)
-    @sections_by_name[host_nick]
-  end
-  
-  def list()
-    to_text(@sections_by_name.keys.sort.map {|name| "Host #{name}"})
-  end
-  
-  def search(text)
-    to_text(@sections.find_all {|section| section.matches?(text)}.sort_by {|section| section.name})
-  end
-  
-  def set(host_nick, key, value)
-    section = @sections_by_name[host_nick] || add_section(host_nick)
-    section[key] = value
-  end
-  
-  def dump
-    to_text([@header_lines, @sections].flatten)
-  end
-
-  def rm(host_nick)
-    if @sections_by_name.key?(host_nick)
-      @sections_by_name.delete host_nick
-      @sections.delete_at(@sections.index{|s| s.name == host_nick})
-    end
-  end
-  
-  def copy(old_host_nick, new_host_nick)
-    if @sections_by_name.key?(old_host_nick)
-      old_section = @sections_by_name[old_host_nick]
-      new_section = @sections_by_name[new_host_nick] || add_section(new_host_nick)
-      new_section.lines = old_section.lines.dup
-      
-      if old_section["Hostname"]
-        new_section["Hostname"] = old_section["Hostname"].gsub(old_host_nick, new_host_nick)
-      end
-    end
-  end
-    
-  def save
-    File.open(File.expand_path("~/.ssh/config"), "w") do |file|
-      file.puts dump
-    end
-  end
-  
-  def backup
-    File.copy(File.expand_path("~/.ssh/config"), File.expand_path("~/.ssh/config~"))
-  end
-  
-  def help
-    str =<<HELP
+def usage
+  str =<<HELP
 ssh-config - Configure your .ssh/config file
 
 Usage:
@@ -188,52 +35,32 @@ Commands:
     NOTE: If host does not exist, it will be created
     NOTE: If value is -, setting will be deleted, e.g. set User -
     NOTE: If all values are deleted, section will NOT be removed, use rm instead
+  unset <host> <setting> - Remove a setting from a host section
   rm <host> - Remove configuration for a host
   copy <host> <newhost> - Duplicate the settings for a host
     NOTE: If Hostname contains Host, new host will be automagically updated
 HELP
-  end
-  
-  private
-  
-  def to_text(ray)
-    ray.map {|s| s.to_s } * "\n"
-  end
-end
 
-scf = SshConfigFile.new
-argv = ARGV
-command = argv.shift
+end
 
 case command
 when 'help'
-  puts scf.help
+  puts usage
 when 'list'
-  puts scf.list
+  puts config.list
 when 'show'
-  puts scf.show(argv.shift)
+  puts config.show(argv.shift)
 when 'search'
-  puts scf.search(argv.shift)
+  puts config.search(argv.shift)
 when 'cp', 'copy'
-  old_host, new_host = argv.shift, argv.shift
-  scf.copy(old_host, new_host)
-  puts scf.show(new_host)
-  scf.save
+  config.copy! argv.shift, argv.shift
+when 'unset'
+  config.unset!(argv.shift, *argv)
 when 'set'
-  scf.backup
-  host = argv.shift
-  while argv.length > 0
-    key, value = argv.shift, argv.shift
-    scf.set(host, key, value)
-  end
-  puts scf.show(host)
-  scf.save
-  puts "~/.ssh/config written."
+  config.set!(*argv)
 when 'rm', 'del', 'delete'
-  scf.backup
-  scf.rm argv.shift
-  scf.save
+  config.rm! argv.shift 
 when 'dump'
-  puts scf.dump
+  puts config.dump
 end
 

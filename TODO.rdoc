@@ -1,0 +1,41 @@
+TODO:
+
+- [ ] ctor option: make/do not make backups of ~/.ssh/config
+
+- [ ] Logging mechanism (don't forget a -q option to shut it up)
+
+- [ ] check command: checks each entry against valid ssh option names
+
+- [ ] cleanup - standardizes indentation of subsections.
+
+- [ ] search mode should highlight search results like ack by wrapping
+  them in \033[43m and \033[0m
+
+- [ ] git store/retrieve command: store/retrieve the config file in a
+  remote repository. Better: Allow mixing and matching of host groups,
+  so you could say "ssh-config git-retrieve work" and it would get
+  all the host settings in your "work" group. (This could get heavy
+  quickly; it needs config to point it at a git repo, and it just begs
+  for an api to administer sections.) For now, YAGNI.
+
+- [x] unset command: deletes a key/value pair out of a host section
+
+- [x] Capture per-line data, so things like whitespace and comments are
+  preserved; this makes the tool friendly to editing the file
+  directly.
+
+- [x] copy should copy, then do a replace based on host-nickname. e.g. If
+  I have
+  
+  Host rails01
+      Hostname rails01.example.com
+
+  then "copy rails01 rails02" should copy it and change the Hostname
+  to "rails02.example.com".
+
+- [x] backup config file before writing
+
+- [x] gemmify
+
+- [x] wrapper methods, e.g. set! calls [backup, set, save].
+

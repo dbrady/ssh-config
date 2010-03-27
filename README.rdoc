@@ -1,0 +1,66 @@
+= ssh-config: A Tool for Managing ssh Config Files
+
+== Overview
+
+It's not THAT much trouble to update your .ssh/config file every time
+a host changes, but when it starts happening often enough, even that
+hassle starts to add up. This is a quick tool I wrote to help handle
+them.
+
+It takes great care to not trash your config file, so you can continue
+to edit your config files by hand before and after running the tool.
+
+ssh-config will make a backup of your ~/.ssh/config file as
+~/.ssh/config~.
+
+Probably the most useful command is "copy", which intelligently copies
+an existing host section.
+
+== Commands
+
+=== set <host> <key> <value>
+
+Adds or updates the value for a given host.
+
+=== unset <host> <key>
+
+Removes a key value for a given host. NOTE: If all values are removed
+from a section, the section is NOT removed; use rm <host> for that.
+
+=== rm <host>
+
+Removes an entire host section.
+
+=== copy <old_host> <new_host>
+
+Copies the entire section named <old_host> to a new section called
+<new_host>. If old_host has a Hostname section, ssh-config will try to
+update it to reflect the new_host name. For example, if you had a
+section like
+
+  Host rails01
+    Hostname rails01.example.com
+
+And you did ssh-config copy rails01 rails02, the new section would
+look like this:
+
+  Host rails02
+    Hostname rails02.example.com
+
+=== dump
+
+Dumps the entire file.
+
+=== show <host>
+
+Dumps one section. (Similar to ssh-what.)
+
+=== search <pattern>
+
+Shows all sections that have any line (key OR value) that matches
+pattern. (Similar to ssh-what.)
+
+=== list
+
+Lists all section names (just the Host line)
+
