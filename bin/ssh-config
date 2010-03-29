@@ -54,7 +54,7 @@ when 'search'
   search = argv.shift
   puts config.search(search).gsub(search, "\033[43m#{search}\033[0m")
 when 'cp', 'copy'
-  config.copy! argv.shift, argv.shift
+  config.copy! argv.shift, argv.shift, *argv
 when 'unset'
   config.unset!(argv.shift, *argv)
 when 'set'

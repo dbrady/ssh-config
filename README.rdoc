@@ -31,7 +31,7 @@ from a section, the section is NOT removed; use rm <host> for that.
 
 Removes an entire host section.
 
-=== copy <old_host> <new_host>
+=== copy <old_host> <new_host> [<key> <value> [...]]
 
 Copies the entire section named <old_host> to a new section called
 <new_host>. If old_host has a Hostname section, ssh-config will try to
@@ -46,6 +46,16 @@ look like this:
 
   Host rails02
     Hostname rails02.example.com
+
+You can manually override any setting, and/or set new ones by
+appending the new key/value pairs at the end. Given the rails01
+section above, "ssh-config copy rails01 rails02 Hostname
+rails-02.example.com User dbrady" would emit
+
+  Host rails02
+    Hostname rails-02.example.com
+    User dbrady
+
 
 === dump
 

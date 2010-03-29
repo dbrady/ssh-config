@@ -4,6 +4,14 @@ CHANGES
 2010-03-29:
 -----------
 
+- Version 0.1.2
+
+  - copy command now takes extra args: key/value pairs to set/override
+    in the new host section
+
+ 2010-03-29:
+-----------
+
 - Version 0.1.1
 
   - Search strings are highlighted

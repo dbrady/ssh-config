@@ -89,13 +89,13 @@ class ConfigFile
     end
   end
   
-  def copy!(old_host_nick, new_host_nick)
+  def copy!(old_host_nick, new_host_nick, *args)
     backup if @make_backups
-    copy(old_host_nick, new_host_nick)
+    copy(old_host_nick, new_host_nick, *args)
     save
   end
   
-  def copy(old_host_nick, new_host_nick)
+  def copy(old_host_nick, new_host_nick, *args)
     if @sections_by_name.key?(old_host_nick)
       old_section = @sections_by_name[old_host_nick]
       new_section = @sections_by_name[new_host_nick] || add_section(new_host_nick)
@@ -103,6 +103,11 @@ class ConfigFile
       
       if old_section["Hostname"]
         new_section["Hostname"] = old_section["Hostname"].gsub(old_host_nick, new_host_nick)
+      end
+      
+      while args.length > 0
+        key, value = args.shift, args.shift
+        section = set(new_host_nick, key, value)
       end
     end
   end
