@@ -1,5 +1,8 @@
 TODO:
 
+- [ ] cp command should take overrides, e.g.
+      "cp rails01 srv02 Hostname srv02.example.com User dbrady"
+
 - [ ] ctor option: make/do not make backups of ~/.ssh/config
 
 - [ ] Logging mechanism (don't forget a -q option to shut it up)
@@ -8,15 +11,15 @@ TODO:
 
 - [ ] cleanup - standardizes indentation of subsections.
 
-- [ ] search mode should highlight search results like ack by wrapping
-  them in \033[43m and \033[0m
-
 - [ ] git store/retrieve command: store/retrieve the config file in a
   remote repository. Better: Allow mixing and matching of host groups,
   so you could say "ssh-config git-retrieve work" and it would get
   all the host settings in your "work" group. (This could get heavy
   quickly; it needs config to point it at a git repo, and it just begs
   for an api to administer sections.) For now, YAGNI.
+
+- [x] search mode should highlight search results like ack by wrapping
+  them in \033[43m and \033[0m
 
 - [x] unset command: deletes a key/value pair out of a host section
 

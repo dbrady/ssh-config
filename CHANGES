@@ -1,0 +1,11 @@
+CHANGES
+----------------------------------------------------------------------
+
+2010-03-29:
+-----------
+
+- Version 0.1.1
+
+  - Search strings are highlighted
+  - Fixed usage/comments to say 'search' instead of 'find'
+

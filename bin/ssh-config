@@ -8,7 +8,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'ssh-con
 # ssh-config dump
 # ssh-config list
 # ssh-config show <host-nickname>
-# ssh-config find <regex>
+# ssh-config search <regex>
 # ssh-config set <host-nickname> <setting> <value> [<setting> <value> [...]]
 #     Note: "<setting> -" deletes a setting
 # ssh-config rm <host-nickname> # delete config settings for that host
@@ -30,7 +30,7 @@ Commands:
   dump - parse and dump the config file
   list - list configured hosts
   show <host> - display the settings for host
-  find <pattern> - find all hosts with any detail matching pattern
+  search <pattern> - search all hosts with any detail matching pattern
   set <host> <setting> <value> [<setting> <value> [...]] - set a value
     NOTE: If host does not exist, it will be created
     NOTE: If value is -, setting will be deleted, e.g. set User -
@@ -51,7 +51,8 @@ when 'list'
 when 'show'
   puts config.show(argv.shift)
 when 'search'
-  puts config.search(argv.shift)
+  search = argv.shift
+  puts config.search(search).gsub(search, "\033[43m#{search}\033[0m")
 when 'cp', 'copy'
   config.copy! argv.shift, argv.shift
 when 'unset'
