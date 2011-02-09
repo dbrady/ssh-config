@@ -10,7 +10,7 @@ class ConfigFile
   def add_section(name)
     section = ConfigSection.new(name)
     @sections << section
-    @sections_by_name[name] = section
+    @sections_by_name[section.name] = section
     section
   end
 
@@ -30,12 +30,16 @@ class ConfigFile
     end
   end
 
-  def show(host_nick)
-    @sections_by_name[host_nick]
+  def show(*host_nicks)
+    items =  host_nicks.map {|nick|
+      sections = @sections.select {|section| section.matches_exactly?(nick)}
+      sections.empty? ? "# No entry found for: #{nick}" : sections
+    }
+    items.flatten.uniq * "\n"
   end
 
   def list()
-    to_text(@sections_by_name.keys.sort.map {|name| "Host #{name}"})
+    to_text(@sections_by_name.keys.sort.map {|name| @sections_by_name[name].header})
   end
 
   def search(text)
@@ -110,6 +114,38 @@ class ConfigFile
         section = set(new_host_nick, key, value)
       end
     end
+  end
+
+  def alias!(host_nick, *args)
+    backup if @make_backups
+    while args.length > 0
+      new_alias = args.shift
+      section = add_alias(host_nick, new_alias)
+    end
+    save
+    section
+  end
+
+  def add_alias(host_nick, new_alias)
+    section = @sections_by_name[host_nick] || add_section(host_nick)
+    section.aliases.push(new_alias) unless section.aliases.member?(new_alias)
+  end
+
+  def unalias!(*args)
+    if(args.size >= 2)
+      name = args.shift
+      section = @sections_by_name[name]
+    else
+      section = @sections.select {|section| section.has_alias?(args[0])}.first
+    end
+
+    if(section) then
+      section.aliases -= args
+    else
+      $stderr.puts "Failed to find section named #{name || args[0]}"
+    end
+    save
+    section
   end
 
   def save

@@ -1,8 +1,10 @@
 class ConfigSection
-  attr_accessor :name, :lines, :settings
+  attr_accessor :name, :aliases, :lines, :settings
 
   def initialize(name)
-    @name = name
+    all_names = name.split(/\s+/)
+    @name = all_names.shift
+    @aliases = all_names
     @settings = {}
     @lines = []
   end
@@ -24,8 +26,13 @@ class ConfigSection
     end
   end
 
+  def header
+    name_with_aliases = [@name, *aliases].join(" ")
+    "Host #{name_with_aliases}"
+  end
+
   def to_s
-    ["Host #{name}", *lines] * "\n"
+    [header, *lines] * "\n"
   end
 
   def []=(setting, value)
@@ -40,7 +47,15 @@ class ConfigSection
 
   def matches?(text)
     r = Regexp.new text
-    name =~ r || lines.any? {|line| line =~ r}
+    name =~ r || aliases.any? {|a| a =~ r} || lines.any? {|line| line =~ r}
+  end
+
+  def matches_exactly?(text)
+    name == text || has_alias?(text)
+  end
+
+  def has_alias?(text)
+    aliases.member?(text)
   end
 
   protected

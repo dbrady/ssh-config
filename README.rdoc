@@ -56,14 +56,16 @@ rails-02.example.com User dbrady" would emit
     Hostname rails-02.example.com
     User dbrady
 
+Note: If you just want another short name for a host, use alias instead
 
 === dump
 
 Dumps the entire file.
 
-=== show <host>
+=== show <host> [<host> ...]
 
-Dumps one section. (Similar to ssh-what.)
+Dumps one section. (Similar to ssh-what.) <host> may be the main name
+for a host or an alias.
 
 === search <pattern>
 
@@ -74,3 +76,14 @@ pattern. (Similar to ssh-what.)
 
 Lists all section names (just the Host line)
 
+=== alias <host> <alias> [<alias> ...]
+
+Adds one or more aliases to a host definition (to show up on the Host line).
+
+=== unalias [<host>] <alias> [<alias> ...]
+
+With 2 or more arguments, looks up host by <host> (must be the first
+name on the Host line), and removes any <alias>es from the list of
+alternate names.  With only 1 argument, looks for an entry by that
+alias (must NOT be the first name on the Host line), and removes the
+alias from the entry, if found.

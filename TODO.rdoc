@@ -15,6 +15,9 @@ TODO:
   quickly; it needs config to point it at a git repo, and it just begs
   for an api to administer sections.) For now, YAGNI.
 
+- [ ] "unalias <name>" should be able to remove a primary name,
+  provided it has other aliases?
+
 - [x] cp command should take overrides, e.g.
       "cp rails01 srv02 Hostname srv02.example.com User dbrady"
 
@@ -29,7 +32,7 @@ TODO:
 
 - [x] copy should copy, then do a replace based on host-nickname. e.g. If
   I have
-  
+
   Host rails01
       Hostname rails01.example.com
 
@@ -41,4 +44,3 @@ TODO:
 - [x] gemmify
 
 - [x] wrapper methods, e.g. set! calls [backup, set, save].
-

@@ -12,7 +12,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'ssh-con
 # ssh-config set <host-nickname> <setting> <value> [<setting> <value> [...]]
 #     Note: "<setting> -" deletes a setting
 # ssh-config rm <host-nickname> # delete config settings for that host
-# ssh-config copy <host-nickname> <new-host-nickname> # copy settings from one to the other. 
+# ssh-config copy <host-nickname> <new-host-nickname> # copy settings from one to the other.
+# ssh-config alias <host-nickname> <alternate-host-nickname> # add an alias
+# ssh-config unalias [<host-nickname>] <alias-to-remove>
 
 config = ConfigFile.new
 argv = ARGV
@@ -49,10 +51,11 @@ when 'help'
 when 'list'
   puts config.list
 when 'show'
-  puts config.show(argv.shift)
+  puts config.show(*argv)
 when 'search'
   search = argv.shift
-  puts config.search(search).gsub(search, "\033[43m#{search}\033[0m")
+  result = config.search(search).gsub(search, "\033[43m#{search}\033[0m")
+  puts result unless result.empty?
 when 'cp', 'copy'
   config.copy! argv.shift, argv.shift, *argv
 when 'unset'
@@ -63,5 +66,11 @@ when 'rm', 'del', 'delete'
   config.rm! argv.shift
 when 'dump'
   puts config.dump
+when 'alias'
+  config.alias!(*argv)
+when 'unalias'
+  config.unalias!(*argv)
+else
+  $stderr.puts "Sorry, don't know how to handle command '#{command}'"
 end
 
