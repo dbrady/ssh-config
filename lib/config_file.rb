@@ -6,14 +6,14 @@ class ConfigFile
     @sections_by_name = {}
     read_config
   end
-  
+
   def add_section(name)
     section = ConfigSection.new(name)
     @sections << section
     @sections_by_name[name] = section
     section
   end
-  
+
   def read_config
     current_section = nil
     IO.readlines(File.expand_path("~/.ssh/config")).each_with_index do |line, i|
@@ -25,19 +25,19 @@ class ConfigFile
           current_section.lines << line
         else
           @header_lines << line
-        end        
+        end
       end
     end
   end
-  
+
   def show(host_nick)
     @sections_by_name[host_nick]
   end
-  
+
   def list()
     to_text(@sections_by_name.keys.sort.map {|name| "Host #{name}"})
   end
-  
+
   def search(text)
     to_text(@sections.find_all {|section| section.matches?(text)}.sort_by {|section| section.name})
   end
@@ -51,12 +51,12 @@ class ConfigFile
     save
     section
   end
-  
+
   def set(host_nick, key, value)
     section = @sections_by_name[host_nick] || add_section(host_nick)
     section[key] = value
   end
-  
+
   def unset!(host_nick, *keys)
     backup if @make_backups
     while keys.length > 0
@@ -65,13 +65,13 @@ class ConfigFile
     save
     section
   end
-  
+
   def unset(host_nick, key)
     if section = @sections_by_name[host_nick]
       section.unset(key)
     end
   end
-  
+
   def dump
     to_text([@header_lines, @sections].flatten)
   end
@@ -81,49 +81,49 @@ class ConfigFile
     rm(host_nick)
     save
   end
-  
+
   def rm(host_nick)
     if @sections_by_name.key?(host_nick)
       @sections_by_name.delete host_nick
       @sections.delete_at(@sections.index{|s| s.name == host_nick})
     end
   end
-  
+
   def copy!(old_host_nick, new_host_nick, *args)
     backup if @make_backups
     copy(old_host_nick, new_host_nick, *args)
     save
   end
-  
+
   def copy(old_host_nick, new_host_nick, *args)
     if @sections_by_name.key?(old_host_nick)
       old_section = @sections_by_name[old_host_nick]
       new_section = @sections_by_name[new_host_nick] || add_section(new_host_nick)
       new_section.lines = old_section.lines.dup
-      
+
       if old_section["Hostname"]
         new_section["Hostname"] = old_section["Hostname"].gsub(old_host_nick, new_host_nick)
       end
-      
+
       while args.length > 0
         key, value = args.shift, args.shift
         section = set(new_host_nick, key, value)
       end
     end
   end
-    
+
   def save
     File.open(File.expand_path("~/.ssh/config"), "w") do |file|
       file.puts dump
     end
   end
-  
+
   def backup
     File.copy(File.expand_path("~/.ssh/config"), File.expand_path("~/.ssh/config~"))
   end
-    
+
   private
-  
+
   def to_text(ray)
     ray.map {|s| s.to_s } * "\n"
   end

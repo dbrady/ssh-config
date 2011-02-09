@@ -60,7 +60,7 @@ when 'unset'
 when 'set'
   config.set!(*argv)
 when 'rm', 'del', 'delete'
-  config.rm! argv.shift 
+  config.rm! argv.shift
 when 'dump'
   puts config.dump
 end
