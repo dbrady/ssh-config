@@ -1,7 +1,7 @@
 spec = Gem::Specification.new do |s|
   s.name = 'ssh-config'
-  s.version = '0.1.2'
-  s.date = '2010-03-29'
+  s.version = '0.1.3'
+  s.date = '2011-02-09'
   s.summary = 'Ssh-Config - tool for managing your .ssh/config file'
   s.email = "github@shinybit.com"
   s.homepage = "http://github.com/dbrady/ssh-config/"
