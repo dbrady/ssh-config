@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-require 'ftools'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'ssh-config'))
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require "rubygems"
+require "ssh-config"
 
 # ssh-config - Manipulate config values in the .ssh/config file.
-# 
+#
 # ssh-config help
 # ssh-config dump
 # ssh-config list
@@ -12,9 +13,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'ssh-con
 # ssh-config set <host-nickname> <setting> <value> [<setting> <value> [...]]
 #     Note: "<setting> -" deletes a setting
 # ssh-config rm <host-nickname> # delete config settings for that host
-# ssh-config copy <host-nickname> <new-host-nickname> # copy settings from one to the other. 
+# ssh-config copy <host-nickname> <new-host-nickname> # copy settings from one to the other.
 
-config = ConfigFile.new
+config = SSHConfig.file
 argv = ARGV
 command = argv.shift
 
@@ -60,8 +61,7 @@ when 'unset'
 when 'set'
   config.set!(*argv)
 when 'rm', 'del', 'delete'
-  config.rm! argv.shift 
+  config.rm! argv.shift
 when 'dump'
   puts config.dump
 end
-

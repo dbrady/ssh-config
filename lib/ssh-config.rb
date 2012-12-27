@@ -1,3 +1,10 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'config_file'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'config_section'))
+require "config_file"
+require "config_section"
 
+module SSHConfig
+  class << self
+    def file
+      @file ||= SSHConfig::ConfigFile.new
+    end
+  end
+end
