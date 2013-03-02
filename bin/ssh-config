@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'ftools'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'ssh-config'))
 
 # ssh-config - Manipulate config values in the .ssh/config file.
