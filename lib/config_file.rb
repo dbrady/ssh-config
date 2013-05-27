@@ -155,7 +155,7 @@ class ConfigFile
   end
 
   def backup
-    File.copy(File.expand_path("~/.ssh/config"), File.expand_path("~/.ssh/config~"))
+    FileUtils.copy(File.expand_path("~/.ssh/config"), File.expand_path("~/.ssh/config~"))
   end
 
   private
