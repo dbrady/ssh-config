@@ -1,13 +1,15 @@
 CHANGES
 ----------------------------------------------------------------------
 
-2011-02-09:
+2013-07-03:
 -----------
 
 - Version 0.1.3
 
   - add 'alias' and 'unalias' commands, and generally support for aliases.
     (changes by David Lindes.)
+  - fix compatibility by using FileUtils#copy instead of File#copy
+    (changes by Jason Lewis.)
 
 2010-03-29:
 -----------
@@ -24,4 +26,3 @@ CHANGES
 
   - Search strings are highlighted
   - Fixed usage/comments to say 'search' instead of 'find'
-
