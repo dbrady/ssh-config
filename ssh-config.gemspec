@@ -11,6 +11,7 @@ spec = Gem::Specification.new do |s|
   s.executables = ["ssh-config"]
   s.extra_rdoc_files = ["README.rdoc", "MIT-LICENSE", "CHANGES"]
   s.authors = ["David Brady"]
+  s.add_development_dependency "rspec"
 
   # ruby -rpp -e "pp (Dir['{README*,CHANGES*,MIT-LICENSE,{examples,lib,protocol,spec}/**/*.{rdoc,json,rb,txt,xml,yml}}'] + Dir['bin/*']).map.sort"
   s.files = ["CHANGES",
@@ -21,4 +22,3 @@ spec = Gem::Specification.new do |s|
     "lib/config_section.rb",
     "lib/ssh-config.rb"]
 end
-
