@@ -46,6 +46,10 @@ HELP
 end
 
 case command
+when '-?'
+  puts usage
+when '-h'
+  puts usage
 when 'help'
   puts usage
 when 'list'
