@@ -45,13 +45,22 @@ HELP
 
 end
 
+def colorize output
+    # Colorize hostname and aliases
+    output = output.gsub(/Host\s+([a-zA-Z0-9 ]*)/, "\033[33mHost \033[31m"+'\1'+"\033[0m")
+    # Colorize comments
+    output = output.gsub("#", "\033[30m#").gsub("\n", "\033[0m\n")
+    # Colorize parameters
+    output.gsub(/^(\s*[a-zA-Z0-9]*\s*\b)/, "\033[37m"+'\1'+"\033[0m")
+end
+
 case command
 when 'help'
   puts usage
 when 'list'
   puts config.list
 when 'show'
-  puts config.show(*argv)
+  puts colorize config.show(*argv)
 when 'search'
   search = argv.shift
   result = config.search(search).gsub(search, "\033[43m#{search}\033[0m")
@@ -65,7 +74,7 @@ when 'set'
 when 'rm', 'del', 'delete'
   config.rm! argv.shift
 when 'dump'
-  puts config.dump
+  puts colorize config.dump
 when 'alias'
   config.alias!(*argv)
 when 'unalias'
