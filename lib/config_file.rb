@@ -1,7 +1,7 @@
 class ConfigFile
-  def initialize(file_location = '~/.ssh/config')
+  def initialize(file_location = '~/.ssh/config', make_backups = true)
     @config_file_location = file_location
-    @make_backups = true
+    @make_backups = make_backups
     @header_lines = []
     @sections = []
     @sections_by_name = {}
