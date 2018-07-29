@@ -65,7 +65,8 @@ class ConfigSection
   end
 
   def setting_index(setting)
-    r = Regexp.new(setting)
+    # according to the ssh_config man page keys are _case insensitive_
+    r = Regexp.new(setting, Regexp::IGNORECASE)
     lines.index {|line| line =~ r}
   end
 end
