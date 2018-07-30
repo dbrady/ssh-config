@@ -1,6 +1,7 @@
 class ConfigFile
-  def initialize
-    @make_backups = true
+  def initialize(file_location = '~/.ssh/config', make_backups = true)
+    @config_file_location = file_location
+    @make_backups = make_backups
     @header_lines = []
     @sections = []
     @sections_by_name = {}
@@ -16,7 +17,7 @@ class ConfigFile
 
   def read_config
     current_section = nil
-    IO.readlines(File.expand_path("~/.ssh/config")).each_with_index do |line, i|
+    IO.readlines(File.expand_path(@config_file_location)).each_with_index do |line, i|
       line.rstrip!
       if line =~ /\bHost\s+(.+)/
         current_section = add_section($1)
@@ -149,13 +150,13 @@ class ConfigFile
   end
 
   def save
-    File.open(File.expand_path("~/.ssh/config"), "w") do |file|
+    File.open(File.expand_path(@config_file_location), "w") do |file|
       file.puts dump
     end
   end
 
   def backup
-    FileUtils.copy(File.expand_path("~/.ssh/config"), File.expand_path("~/.ssh/config~"))
+    FileUtils.copy(File.expand_path(@config_file_location), File.expand_path("#{@config_file_location}~"))
   end
 
   private
