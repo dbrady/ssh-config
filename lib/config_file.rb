@@ -17,7 +17,9 @@ class ConfigFile
 
   def read_config
     current_section = nil
-    IO.readlines(File.expand_path(@config_file_location)).each_with_index do |line, i|
+    filename = File.expand_path(@config_file_location)
+    return unless File.exist?(filename)
+    IO.readlines(filename).each_with_index do |line, i|
       line.rstrip!
       if line =~ /\bHost\s+(.+)/
         current_section = add_section($1)
@@ -156,7 +158,8 @@ class ConfigFile
   end
 
   def backup
-    FileUtils.copy(File.expand_path(@config_file_location), File.expand_path("#{@config_file_location}~"))
+    filename = File.expand_path(@config_file_location)
+    FileUtils.copy(filename, filename + "~") if File.exist?(filename)
   end
 
   private
