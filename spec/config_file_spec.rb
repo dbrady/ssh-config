@@ -122,6 +122,28 @@ describe ConfigFile do
                       )
 
   end
+
+  it 'write a new file' do
+    filename = @file.path
+    @file.close!
+    expect(File).to_not exist(filename)
+    config_file = ConfigFile.new(filename, false)
+
+    config_file.add_section('loltest')
+    config_file.set('loltest', 'HostName', 'loltest.example.com')
+
+    config_file.save
+
+    output = File.read(filename)
+
+    expect(output).to eq(<<~EOF
+      Host loltest
+          HostName loltest.example.com
+                      EOF
+                      )
+    File.unlink(filename)
+  end
+
   it 'saves a backup file on save' do
     pending 'Discussion of behavior'
     @file.write(File.read(File.join(examples_dir, 'existing.ssh_config')))
