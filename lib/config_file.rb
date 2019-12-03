@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class ConfigFile
   def initialize(file_location = '~/.ssh/config', make_backups = true)
     @config_file_location = file_location
