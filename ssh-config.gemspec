@@ -20,5 +20,9 @@ spec = Gem::Specification.new do |s|
     "lib/config_file.rb",
     "lib/config_section.rb",
     "lib/ssh-config.rb"]
+
+  s.add_development_dependency 'rspec-core', '3.7'
+  s.add_development_dependency 'rspec-expectations', '3.7'
+  s.add_development_dependency 'simplecov', '0.16.1'
 end
 

@@ -1,0 +1,3 @@
+Host loltest2
+  HostName this.is.my.host
+  User lol
