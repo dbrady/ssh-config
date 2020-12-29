@@ -52,7 +52,6 @@ class ConfigFile
   end
 
   def set!(host_nick, *args)
-    backup if @make_backups
     while args.length > 0
       key, value = args.shift, args.shift
       section = set(host_nick, key, value)
@@ -67,7 +66,6 @@ class ConfigFile
   end
 
   def unset!(host_nick, *keys)
-    backup if @make_backups
     while keys.length > 0
       section = unset(host_nick, keys.shift)
     end
@@ -86,7 +84,6 @@ class ConfigFile
   end
 
   def rm!(host_nick)
-    backup if @make_backups
     rm(host_nick)
     save
   end
@@ -99,7 +96,6 @@ class ConfigFile
   end
 
   def copy!(old_host_nick, new_host_nick, *args)
-    backup if @make_backups
     copy(old_host_nick, new_host_nick, *args)
     save
   end
@@ -122,7 +118,6 @@ class ConfigFile
   end
 
   def alias!(host_nick, *args)
-    backup if @make_backups
     while args.length > 0
       new_alias = args.shift
       section = add_alias(host_nick, new_alias)
@@ -154,6 +149,7 @@ class ConfigFile
   end
 
   def save
+    backup if @make_backups
     File.open(File.expand_path(@config_file_location), "w") do |file|
       file.puts dump
     end
@@ -170,4 +166,3 @@ class ConfigFile
     ray.map {|s| s.to_s } * "\n"
   end
 end
-

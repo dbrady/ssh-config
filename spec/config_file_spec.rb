@@ -145,7 +145,7 @@ describe ConfigFile do
   end
 
   it 'saves a backup file on save' do
-    pending 'Discussion of behavior'
+    # pending 'Discussion of behavior'
     @file.write(File.read(File.join(examples_dir, 'existing.ssh_config')))
 
     @file.flush
@@ -156,6 +156,9 @@ describe ConfigFile do
 
     #Kinda surprising, expected save to create the backups.
     config_file.save
+
+    expect(File.exists?(@file.path)).to be_truthy
+    expect(File.exists?(@file.path.to_s + "~")).to be_truthy
 
     output = File.read(@file)
     backup_output = File.read("#{@file.path}~")
